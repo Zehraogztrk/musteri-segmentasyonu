@@ -19,3 +19,6 @@ Müşteri davranışlarını analiz ederek pazarlama stratejilerini geliştirmek
 - RFM analizi
 - K-Means kümeleme
 - Segment analizi
+  
+## Çıktılar
+Proje sonucunda müşteriler farklı segmentlere ayrılmış ve her segment için pazarlama stratejileri önerilmiştir.
