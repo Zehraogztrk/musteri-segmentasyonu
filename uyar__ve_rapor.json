@@ -1,0 +1,125 @@
+{
+  "name": "uyarı ve rapor",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        740,
+        80
+      ],
+      "id": "eb3770bd-d228-4bed-9ec4-5b7347ee077a",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "projectId": {
+          "__rl": true,
+          "value": "lastproject-465319",
+          "mode": "list",
+          "cachedResultName": "LastProject",
+          "cachedResultUrl": "https://console.cloud.google.com/bigquery?project=lastproject-465319"
+        },
+        "sqlQuery": "SELECT * FROM lastproject-465319.TEZ.rfm_results ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleBigQuery",
+      "typeVersion": 2.1,
+      "position": [
+        1000,
+        80
+      ],
+      "id": "39d6bfdd-e631-430d-8812-b4c5b198e507",
+      "name": "Google BigQuery",
+      "credentials": {
+        "googleApi": {
+          "id": "UKSuv0qRVXJizFR2",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "return [\n  {\n    json: {\n      chat_id: \"7723408054\",\n      mesaj:\n        \"📊 RFM Segmentasyon Özeti\\n\" +\n        \"📌 Loyal Customers: 2335\\n\" +\n        \"📌 VIP Customers: 2088\\n\" +\n        \"📌 Other: 2255\\n\" +\n        \"📌 Lost Customers: 2050\\n\" +\n        \"📌 At Risk Customers: 2271\\n\\n\" +\n        \"🔔 Merhaba! At Risk durumundaki müşteriler bugün için uyarı durumuna geçti. Hemen iletişime geçin!\"\n    }\n  }\n];"
+      },
+      "name": "Rapor Metni Oluştur",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        80
+      ],
+      "id": "a1440817-2c7f-45e9-8f6f-12b75f7c00e1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json[\"chat_id\"] }}",
+        "text": "=🔔 Merhaba! At Risk durumundaki müşteriler bugün için uyarı durumuna geçti. Hemen iletişime geçin! {{ $json.mesaj }}",
+        "additionalFields": {}
+      },
+      "name": "Telegrama Gönder",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1580,
+        80
+      ],
+      "id": "e9dc91ea-6037-416a-9e3f-d829407e385f",
+      "webhookId": "e323e8c8-6286-47dd-b1fc-cfc794a730c6",
+      "credentials": {
+        "telegramApi": {
+          "id": "SHPfO1TcVW9xVueD",
+          "name": "Telegramrfm"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google BigQuery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google BigQuery": {
+      "main": [
+        [
+          {
+            "node": "Rapor Metni Oluştur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rapor Metni Oluştur": {
+      "main": [
+        [
+          {
+            "node": "Telegrama Gönder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "57e3a65a-bdc8-430f-8288-9c0189520076",
+  "meta": {
+    "instanceId": "7bd97a5d973c6fe08e0e9c0a0ec6669ef578048b3958cfcf2932c480fae269df"
+  },
+  "id": "nOe5YNdxYfnpTRWz",
+  "tags": []
+}

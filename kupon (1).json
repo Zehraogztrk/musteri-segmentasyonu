@@ -1,0 +1,128 @@
+{
+  "name": "kupon",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        -40
+      ],
+      "id": "ac59aac2-d7cd-4413-afba-15e81687eee9",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "projectId": {
+          "__rl": true,
+          "value": "lastproject-465319",
+          "mode": "list",
+          "cachedResultName": "LastProject",
+          "cachedResultUrl": "https://console.cloud.google.com/bigquery?project=lastproject-465319"
+        },
+        "sqlQuery": "SELECT\n customer_id,\n  Segment,\n  Monetary,\n  Recency,\n  Frequency\nFROM lastproject-465319.TEZ.rfm_results\nWHERE Segment != 'VIP'\nAND Monetary >= 4\nLIMIT 504",
+        "options": {
+          "location": "europe-west1"
+        }
+      },
+      "type": "n8n-nodes-base.googleBigQuery",
+      "typeVersion": 2.1,
+      "position": [
+        -580,
+        -40
+      ],
+      "id": "5c08a7dc-ddce-4fdf-9ebc-af626f55febe",
+      "name": "Google BigQuery",
+      "credentials": {
+        "googleApi": {
+          "id": "UKSuv0qRVXJizFR2",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "return items.map(item => {\n  return {\n    json: {\n      chat_id: \"7723408054\", // Senin Telegram chat ID\n      mesaj: \"Merhaba ${item.json.CustomerID}, sizi VIP segmentine taşıyacak özel bir teklifimiz var! Son alışverişlerinizde gösterdiğiniz ilgiden dolayı %10 indirim kuponu kazandınız! Kupon kodu: VIP2024 🎉\"\n    }\n  };\n});"
+      },
+      "name": "Kupon Mesajı Oluştur",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        -360,
+        -40
+      ],
+      "id": "b381ea3e-d246-4def-bcaf-a9aaf6179081"
+    },
+    {
+      "parameters": {
+        "chatId": "=7723408054",
+        "text": "=Merhaba , sizi VIP segmentine taşıyacak özel bir teklifimiz var! Son alışverişlerinizde gösterdiğiniz ilgiden dolayı %10 indirim kuponu kazandınız! Kupon kodu: VIP2025 🎉",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -140,
+        -40
+      ],
+      "id": "c2f69e7c-a103-41ae-b521-230b8b9af1d2",
+      "name": "Telegram",
+      "webhookId": "6a98bae9-ea1f-4591-96c8-a1151c1fc518",
+      "credentials": {
+        "telegramApi": {
+          "id": "SHPfO1TcVW9xVueD",
+          "name": "Telegramrfm"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google BigQuery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google BigQuery": {
+      "main": [
+        [
+          {
+            "node": "Kupon Mesajı Oluştur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kupon Mesajı Oluştur": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "28e5a9d3-815d-48e3-8e96-b73191ce149e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7bd97a5d973c6fe08e0e9c0a0ec6669ef578048b3958cfcf2932c480fae269df"
+  },
+  "id": "vH6cllUzYULHnDWS",
+  "tags": []
+}
